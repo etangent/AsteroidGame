@@ -1,6 +1,7 @@
 import pygame
 import random
 import math
+import asyncio
 from pygame.math import Vector2
 
 pygame.init()
@@ -36,7 +37,7 @@ class Player:
 
 asteroids = []
 
-def run():
+async def run():
     global asteroids, cont
     asteroids = [Asteroid(Vector2(random.uniform(100, WIDTH - 100), random.uniform(100, HEIGHT - 100)), Vector2(random.uniform(-3, 3), random.uniform(-3, 3)), random.uniform(6, 24)) for _ in range(NUM_ASTEROIDS)]
     missiles = []
@@ -145,9 +146,10 @@ def run():
 
         pygame.display.flip()
         clock.tick(60)
+        await asyncio.sleep(0)
 
 while cont:
-    run()
+    asyncio.run(run())
     if not cont:
         break
     font = pygame.font.Font(None, 50)
