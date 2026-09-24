@@ -4,16 +4,8 @@ import math
 import asyncio
 from pygame.math import Vector2
 
-pygame.init()
 WIDTH, HEIGHT = 1400, 900
 NUM_ASTEROIDS = 36
-
-screen = pygame.display.set_mode((WIDTH, HEIGHT))
-clock = pygame.time.Clock() 
-cont = True
-
-player_image = pygame.image.load("assets/player.png").convert_alpha()
-player_image = pygame.transform.scale(player_image, (30, 60))
 
 class Asteroid:
     def __init__(self, x, v, r):
@@ -37,8 +29,8 @@ class Player:
 
 asteroids = []
 
-async def run():
-    global asteroids, cont
+async def run(screen, clock, player_image):
+    global asteroids
     asteroids = [Asteroid(Vector2(random.uniform(100, WIDTH - 100), random.uniform(100, HEIGHT - 100)), Vector2(random.uniform(-3, 3), random.uniform(-3, 3)), random.uniform(6, 24)) for _ in range(NUM_ASTEROIDS)]
     missiles = []
     player = Player(Vector2(WIDTH/2, HEIGHT/2), Vector2(0, 0), 0)
@@ -54,7 +46,7 @@ async def run():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
-                cont = False
+                pygame.quit()
             if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE and asteroids:
                 # nearest = min(
                 #     asteroids,
@@ -148,26 +140,41 @@ async def run():
         clock.tick(60)
         await asyncio.sleep(0)
 
-while cont:
-    asyncio.run(run())
-    if not cont:
-        break
-    font = pygame.font.Font(None, 50)
-    text_surface = None
-    if asteroids:
-        text_surface = font.render("You Died! Press Space to play again...", True, (255, 255, 255))
-    else:
-        text_surface = font.render("You Won! Press Space to play again...", True, (255, 255, 255))
-    screen.fill((0,0,0))
-    screen.blit(text_surface, (WIDTH / 2 - 250, HEIGHT/2))
-    pygame.display.flip()
-    checking = True
-    while checking:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                cont = False
-                checking = False
-            if event.type == pygame.MOUSEBUTTONDOWN or (event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE):
-                checking = False
+async def main():
+    pygame.init()
+    screen = pygame.display.set_mode((WIDTH, HEIGHT))
+    clock = pygame.time.Clock()
+    player_image = pygame.image.load("assets/player.png").convert_alpha()
+    player_image = pygame.transform.scale(player_image, (30, 60))
 
-pygame.quit()
+    while True:
+        await run(screen, clock, player_image)
+
+        if not pygame.get_init():
+            break
+
+        # Keep the browser event loop alive while showing the end screen.
+        cont = True
+        while cont:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    return
+                if event.type == pygame.MOUSEBUTTONDOWN or (event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE):
+                    cont = False
+
+            font = pygame.font.Font(None, 50)
+            text_surface = font.render(
+                "You Won! Press Space to play again..." if not asteroids
+                else "You Died! Press Space to play again...",
+                True,
+                (255, 255, 255),
+            )
+            screen.fill((0, 0, 0))
+            screen.blit(text_surface, (WIDTH / 2 - 250, HEIGHT / 2))
+            pygame.display.flip()
+            await asyncio.sleep(0)
+
+    pygame.quit()
+
+asyncio.run(main())
