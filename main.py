@@ -38,7 +38,7 @@ async def run(screen, clock, player_image, enemy_image):
     asteroids = [Asteroid(Vector2(random.uniform(100, WIDTH - 100), random.uniform(100, HEIGHT - 100)), Vector2(random.uniform(-3, 3), random.uniform(-3, 3)), random.uniform(6, 24)) for _ in range(NUM_ASTEROIDS)]
     enemies = [Ship(Vector2(100, 100), Vector2(0, 0), random.uniform(0, 360), 0, 1, .8), Ship(Vector2(WIDTH-100, 100), Vector2(0, 0), random.uniform(0, 360), 0, 1, .8), Ship(Vector2(WIDTH - 100, HEIGHT - 100), Vector2(0, 0), random.uniform(0, 360), 0, 1, .8), Ship(Vector2(100, HEIGHT - 100), Vector2(0, 0), random.uniform(0, 360), 0, 1, .8)]
     missiles = []
-    player = Ship(Vector2(WIDTH/2, HEIGHT/2), Vector2(0, 0), 0, 0, .5, .95)
+    player = Ship(Vector2(WIDTH/2, HEIGHT/2), Vector2(0, 0), 0, 0, .5, .99)
 
     running = True
     for a in asteroids:
@@ -117,7 +117,8 @@ async def run(screen, clock, player_image, enemy_image):
             
         if keys[pygame.K_UP]:   
             player.v += Vector2(0, -1).rotate(-player.a) * player.accel
-            
+
+        player.v *= player.drag
         player.x += player.v
         player.x.x %= WIDTH
         player.x.y %= HEIGHT
