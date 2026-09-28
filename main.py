@@ -5,7 +5,7 @@ import asyncio
 from pygame.math import Vector2
 
 WIDTH, HEIGHT = 1400, 900
-NUM_ASTEROIDS = 1
+NUM_ASTEROIDS = 36
 
 class Asteroid:
     def __init__(self, x, v, r):
