@@ -5,7 +5,7 @@ import asyncio
 from pygame.math import Vector2
 
 WIDTH, HEIGHT = 1400, 900
-NUM_ASTEROIDS = 36 
+NUM_ASTEROIDS = 1
 
 class Asteroid:
     def __init__(self, x, v, r):
@@ -38,7 +38,7 @@ async def run(screen, clock, player_image, enemy_image):
     asteroids = [Asteroid(Vector2(random.uniform(100, WIDTH - 100), random.uniform(100, HEIGHT - 100)), Vector2(random.uniform(-3, 3), random.uniform(-3, 3)), random.uniform(6, 24)) for _ in range(NUM_ASTEROIDS)]
     enemies = [Ship(Vector2(100, 100), Vector2(0, 0), random.uniform(0, 360), 0, 1, .8), Ship(Vector2(WIDTH-100, 100), Vector2(0, 0), random.uniform(0, 360), 0, 1, .8), Ship(Vector2(WIDTH - 100, HEIGHT - 100), Vector2(0, 0), random.uniform(0, 360), 0, 1, .8), Ship(Vector2(100, HEIGHT - 100), Vector2(0, 0), random.uniform(0, 360), 0, 1, .8)]
     missiles = []
-    player = Ship(Vector2(WIDTH/2, HEIGHT/2), Vector2(0, 0), 0, 0, .05)
+    player = Ship(Vector2(WIDTH/2, HEIGHT/2), Vector2(0, 0), 0, 0, .5, .95)
 
     running = True
     for a in asteroids:
